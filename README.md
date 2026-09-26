@@ -183,11 +183,3 @@ NEXT_PUBLIC_API_URL=https://your-ngrok-url.ngrok-free.dev
 - Docker containerization
 
 ---
-
-## 👨‍💻 Author
-
-**Shourya Kashyap**  
-AI & IoT Enthusiast  
-B.Tech (3rd Year)
-
----
