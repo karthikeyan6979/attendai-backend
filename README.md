@@ -1,185 +1,145 @@
 # AttendAI Backend
 
-Flask-based REST API backend for **AttendAI** — a smart classroom attendance monitoring system powered by Face Recognition, Raspberry Pi 5, and IoT integration.
+Flask REST API for **AttendAI**, a smart classroom attendance system that uses face recognition, a Raspberry Pi 5, and IoT hardware feedback. It runs entirely on the Pi, with no cloud dependency by default.
 
-This backend handles:
+The backend:
 
-- Face recognition processing
-- Attendance recording
-- Student management
-- System status monitoring
-- Hardware communication (Arduino, RGB LED, Buzzer)
+- Processes camera input and matches faces against stored encodings
+- Records attendance in a local SQLite database
+- Manages student records
+- Reports system status to the frontend dashboard
+- Drives hardware feedback (RGB LED and buzzer via Arduino)
 
----
+The dashboard that consumes this API is a separate Next.js app.
 
-## Project Overview
+## Features
 
-AttendAI is an AI + IoT-based classroom attendance system that automates student attendance using facial recognition.
+- Automated attendance through facial recognition
+- Real-time data for the dashboard over a REST API
+- Local SQLite storage
+- Arduino-based feedback: RGB LED for attendance status, passive buzzer for confirmation
+- Start and stop recognition remotely through the API
+- Runs on the edge, on a Raspberry Pi 5
 
-This repository contains the **Flask REST API** running on a Raspberry Pi 5, responsible for:
+## Tech stack
 
-- Processing camera input
-- Matching faces using encodings
-- Updating attendance records in SQLite
-- Serving real-time data to the frontend dashboard
-- Controlling hardware feedback components
+| Component | Technology |
+|---|---|
+| Language | Python 3 |
+| API | Flask, Flask-CORS |
+| Vision | OpenCV, face_recognition |
+| Database | SQLite |
+| Hardware | Raspberry Pi 5, Arduino (RGB LED, passive buzzer) |
+| Frontend | Next.js (separate repository) |
 
----
+## Getting started
 
-## 🏗️ System Architecture
+### 1. Clone the repository
 
-Camera  
-⬇  
-Raspberry Pi 5  
-⬇  
-Face Recognition Engine (Python + OpenCV)  
-⬇  
-Flask REST API  
-⬇  
-Next.js Dashboard (Frontend)  
-
----
-
-## ⚙️ Tech Stack
-
-- **Python 3**
-- **Flask**
-- **Flask-CORS**
-- **OpenCV**
-- **face_recognition**
-- **SQLite**
-- **Raspberry Pi 5**
-- **Arduino (RGB LED + Buzzer integration)**
-
----
-
-## API Endpoints
-
-### System Status
-GET /api/status
-
-
-Returns:
-{
-"success": true,
-"data": {
-"recognition_running": true,
-"camera_connected": true,
-"present_today": 28,
-"total_students": 30
-}
-}
-
-
----
-
-### 👨Students
-GET /api/students
-POST /api/students
-
-
----
-
-### Attendance Records
-GET /api/attendance
-
-
----
-
-### Control Recognition
-POST /api/start
-POST /api/stop
-
-
----
-
-## Setup & Installation
-
-### 1️⃣ Clone Repository
-
+```bash
 git clone https://github.com/ryze-7/attend-ai-backend.git
 cd attend-ai-backend
+```
 
+### 2. Create a virtual environment
 
----
-
-### 2️⃣ Create Virtual Environment
-
+```bash
 python3 -m venv venv
 source venv/bin/activate
+```
 
+### 3. Install dependencies
 
----
-
-### 3️⃣ Install Dependencies
-
+```bash
 pip install -r requirements.txt
+```
 
+`face_recognition` depends on `dlib`, which can take a long time to build on a Raspberry Pi. Expect the install to be slow.
 
----
+### 4. Run the server
 
-### 4️⃣ Run API Server
-
+```bash
 python3 api.py
+```
 
+The API is served at `http://0.0.0.0:5000`.
 
-Server runs on:
+## API reference
 
-http://0.0.0.0:5000
+Base URL: `http://<pi-ip-address>:5000`
 
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/status` | System status and today's attendance summary |
+| GET | `/api/students` | List all students |
+| POST | `/api/students` | Add a student |
+| GET | `/api/attendance` | Get attendance records |
+| POST | `/api/start` | Start face recognition |
+| POST | `/api/stop` | Stop face recognition |
 
----
+### Example: `GET /api/status`
 
-## 🌐 Remote Access (Optional)
+```json
+{
+  "success": true,
+  "data": {
+    "recognition_running": true,
+    "camera_connected": true,
+    "present_today": 28,
+    "total_students": 30
+  }
+}
+```
 
-To expose API publicly:
+## Hardware
 
+- An Arduino is connected to the Raspberry Pi over USB.
+- The RGB LED shows attendance status.
+- The passive buzzer plays a confirmation sound.
+- A successful face detection triggers the LED and buzzer signals.
+
+## Connecting the frontend
+
+For access from outside the local network, you can tunnel the API with ngrok:
+
+```bash
 ngrok http 5000
+```
 
+Then set the generated HTTPS URL in the frontend's environment:
 
-Use generated HTTPS URL in frontend environment variable:
-
+```
 NEXT_PUBLIC_API_URL=https://your-ngrok-url.ngrok-free.dev
+```
 
+## Security
 
----
+This is a development version.
 
-## 🔐 Security Notes
+- There is **no authentication**. Anyone who can reach the API can read attendance data, add students, and start or stop recognition.
+- CORS only controls which browser origins may call the API. It does not protect it.
+- Keep the API on a trusted local network. Use ngrok only for short demos, and shut the tunnel down afterwards.
+- Token-based authentication is needed before any real deployment.
 
-- Designed for local network deployment
-- Uses CORS for frontend communication
-- No authentication implemented (development version)
-- Recommended to add token-based authentication for production
+## Roadmap
 
----
+- [ ] JWT authentication
+- [ ] Face enrollment from the dashboard
+- [ ] Multi-class support
+- [ ] Email and SMS notifications
+- [ ] Docker containerization
+- [ ] Cloud deployment (AWS / VPS)
 
-## 🧩 Hardware Integration
+## Team
 
-- Arduino connected via USB
-- RGB LED for attendance status
-- Passive buzzer for confirmation sound
-- Face detection triggers hardware signals
+- Karthikeyan
+- Akshat Sharma
+- Shourya Kashyap
 
----
+Faculty supervisor: Dr. Indu Sharma
 
-## 🚀 Features
+B.Tech Computer Science and Engineering, SRM University Delhi-NCR
 
-✔ Automated attendance using facial recognition  
-✔ Real-time dashboard integration  
-✔ SQLite-based local database  
-✔ IoT hardware feedback system  
-✔ RESTful API architecture  
-✔ Edge computing (No cloud dependency)  
+## License
 
----
-
-## 🛠 Future Improvements
-
-- JWT authentication
-- Cloud deployment (AWS / VPS)
-- Multi-class support
-- Face training from dashboard
-- Email/SMS notifications
-- Docker containerization
-
----
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
