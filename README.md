@@ -130,16 +130,6 @@ This is a development version.
 - [ ] Docker containerization
 - [ ] Cloud deployment (AWS / VPS)
 
-## Team
-
-- Karthikeyan
-- Akshat Sharma
-- Shourya Kashyap
-
-Faculty supervisor: Dr. Indu Sharma
-
-B.Tech Computer Science and Engineering, SRM University Delhi-NCR
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
